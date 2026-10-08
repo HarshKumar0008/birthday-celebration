@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Happy Birthday Supriya ❤️</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#120816;overflow:hidden}
+body{font-family:Georgia,serif}
+.wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#120816}
+.phone{position:relative;height:100dvh;width:min(100vw,56.25dvh);overflow:hidden;background:#120816;box-shadow:0 0 60px #000}
+video{width:100%;height:100%;object-fit:cover;display:block}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 65%,rgba(10,2,15,.55));pointer-events:none}
+.ui{position:absolute;left:5%;right:5%;bottom:3.2%;z-index:5;display:flex;gap:9px}
+button{flex:1;border:1px solid #fff7;color:#fff;font-weight:700;font-size:12px;padding:13px 8px;border-radius:16px;box-shadow:0 5px 18px #0008;backdrop-filter:blur(7px);cursor:pointer}
+#cake{background:linear-gradient(135deg,#d93678eF,#a84ad5eF)}
+#bless{background:linear-gradient(135deg,#0d73dfeF,#26a9cfeF)}
+button:disabled{opacity:.38;filter:grayscale(.6);cursor:not-allowed}
+#status{position:absolute;z-index:6;top:2.5%;left:8%;right:8%;text-align:center;color:#fff;background:#160b1dcc;border:1px solid #ffffff30;border-radius:999px;padding:8px 10px;font-size:11px;opacity:0;transition:.3s;pointer-events:none}
+#status.show{opacity:1}
+#replay{position:absolute;z-index:6;top:2.5%;right:5%;display:none;flex:0 0 auto;width:auto;background:#160b1dcc;padding:8px 12px}
+#progress{position:absolute;z-index:6;bottom:0;left:0;height:3px;width:0;background:#ffd56e;box-shadow:0 0 10px #ffd56e;transition:none}
+#tapHint{position:absolute;z-index:4;left:10%;right:10%;bottom:12%;text-align:center;color:#fff;font-size:11px;text-shadow:0 2px 8px #000;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="phone">
+<video id="v" playsinline preload="auto" muted>
+  <source src="birthday_animation.mp4" type="video/mp4">
+</video>
+<div class="shade"></div>
+<div id="status"></div>
+<button id="replay">↻ Replay</button>
+<div id="tapHint">Your surprise is ready ❤️</div>
+<div class="ui">
+ <button id="cake">🎂 CAKE CUT & FEED</button>
+ <button id="bless" disabled>🙏 TAKE BLESSINGS</button>
+</div>
+<div id="progress"></div>
+</div></div>
+
+<script>
+const v=document.getElementById('v'), cake=document.getElementById('cake'),
+bless=document.getElementById('bless'), status=document.getElementById('status'),
+hint=document.getElementById('tapHint'), replay=document.getElementById('replay'),
+progress=document.getElementById('progress');
+
+const CAKE_START=0.15, CAKE_END=5.05;
+const BLESS_START=5.05, BLESS_END=7.75;
+let mode='idle';
+
+function msg(t){
+ status.textContent=t;status.classList.add('show');
+ setTimeout(()=>status.classList.remove('show'),2200);
+}
+function segment(start,end,next){
+ v.pause();v.currentTime=start;mode=next||'done';v.play().catch(()=>{});
+ function tick(){
+   progress.style.width=((v.currentTime-start)/(end-start)*100)+'%';
+   if(mode==='cake' && v.currentTime>=CAKE_END){
+      v.pause();v.currentTime=CAKE_END;bless.disabled=false;
+      cake.disabled=true;hint.textContent='Cake offered ❤️ Now take their blessings.';
+      msg('The sweet offering is complete. 🪷');
+      return;
+   }
+   if(mode==='bless' && v.currentTime>=BLESS_END){
+      v.pause();v.currentTime=BLESS_END;replay.style.display='block';
+      hint.textContent='Blessings received. Happy Birthday, Supriya! ❤️';
+      msg('Radha Rani and Krishna Bhagwan have blessed you. 🙏');
+      return;
+   }
+   if(!v.paused)requestAnimationFrame(tick);
+ }
+ requestAnimationFrame(tick);
+}
+cake.onclick=()=>{
+ cake.disabled=true;bless.disabled=true;hint.textContent='Watch the cake-cutting & sweet offering...';
+ msg('🎂 Cake is being cut and offered to Radha Rani & Krishna Bhagwan...');
+ segment(CAKE_START,CAKE_END,'cake');
+};
+bless.onclick=()=>{
+ bless.disabled=true;hint.textContent='Receiving blessings... 🪷';
+ msg('🙏 Radha Rani and Krishna Bhagwan are giving their blessings...');
+ segment(BLESS_START,BLESS_END,'bless');
+};
+replay.onclick=()=>{
+ replay.style.display='none';cake.disabled=false;bless.disabled=true;
+ progress.style.width='0';hint.textContent='Your surprise is ready ❤️';mode='idle';
+ v.currentTime=0;msg('Ready again. ✨');
+};
+v.addEventListener('loadedmetadata',()=>{v.currentTime=0});
+</script>
+</body>
+</html>
